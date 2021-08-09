@@ -3,7 +3,7 @@ project(test1 Fortran)
 configure_file(data/test_input_hdf5.cgn test_input_hdf5.cgn COPYONLY)
 
 add_executable(test1
-  test1.f90
+  test1.F90
  )
 
 target_link_libraries(test1
