@@ -190,6 +190,7 @@ jobs:
         # display download url
         Write-Output "$((($release.Content | ConvertFrom-Json).assets).browser_download_url)"
         Get-FileHash "iricsdk.7z"
+        Remove-Item iricsdk.7z
 
     - name: Update iriclib version
       run: |
@@ -221,6 +222,7 @@ jobs:
           }
           return $_
         } | Set-Content .\versions.sh
+        git status
         git diff
 
     - name: Commit and push iricdev
