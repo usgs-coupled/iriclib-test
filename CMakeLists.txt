@@ -9,6 +9,16 @@ project (
 # set standard directory locations
 include(GNUInstallDirs)
 
+# # detect Fortran/C interface
+# include(FortranCInterface)
+
+if(WIN32)
+  set(F2C_INTERFACE "UPPERCASE" CACHE STRING "Fortran/C Interface: LOWERCASE LOWERCASE_ LOWERCASE__ UPPERCASE UPPERCASE_ UPPERCASE__")
+else()
+  set(F2C_INTERFACE "LOWERCASE_" CACHE STRING "Fortran/C Interface: LOWERCASE LOWERCASE_ LOWERCASE__ UPPERCASE UPPERCASE_ UPPERCASE__")
+endif()
+set_property(CACHE F2C_INTERFACE PROPERTY STRINGS "LOWERCASE;LOWERCASE_;LOWERCASE__;UPPERCASE;UPPERCASE_;UPPERCASE__")
+
 # Add a d to debug library
 set(CMAKE_DEBUG_POSTFIX "d" CACHE STRING "Set Debug library postfix" FORCE)
 
@@ -244,7 +254,7 @@ target_compile_definitions(iriclib
     $<$<BOOL:MSVC>:_SCL_SECURE_NO_WARNINGS>
     IRICLIBDLL_LIBRARY
     IRICSOLVERLIBDLL_LIBRARY
-    UPPERCASE                                                  # @todo
+    ${F2C_INTERFACE}
 )
 
 # this works except it also adds iric.f90 to CXX/C projects
