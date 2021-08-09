@@ -189,4 +189,40 @@ jobs:
         Write-Output "$((($release.Content | ConvertFrom-Json).assets).browser_download_url)"
         Get-FileHash "iricsdk.7z"
 
+    - name: Update iriclib version
+      run: |
+        # versions.cmd
+        (Get-Content .\versions.cmd) | Foreach-Object {
+          if ($_ -match '^set IRICLIB_VER=.*$') {
+            return "set IRICLIB_VER=" + $env:IRICLIB_VER
+          }
+          return $_
+        } | Set-Content .\versions.cmd
+        # versions.ps1
+        (Get-Content .\versions.ps1) | Foreach-Object {
+          if ($_ -match '^\$env:IRICLIB_VER=.*$') {
+            return '$env:IRICLIB_VER="' + $env:IRICLIB_VER + '"'
+          }
+          return $_
+        } | Set-Content .\versions.ps1
+        # VERSIONS
+        (Get-Content .\VERSIONS) | Foreach-Object {
+          if ($_ -match '^IRICLIB_VER=.*$') {
+            return 'IRICLIB_VER=' + $env:IRICLIB_VER
+          }
+          return $_
+        } | Set-Content .\VERSIONS
+        # versions.sh
+        (Get-Content .\versions.sh) | Foreach-Object {
+          if ($_ -match '^IRICLIB_VER=.*$') {
+            return 'IRICLIB_VER=' + $env:IRICLIB_VER
+          }
+          return $_
+        } | Set-Content .\versions.sh
+        git diff
 
+    - name: Commit and push iricdev
+      uses: actions-js/push@master
+      with:
+        github_token: ${{secrets.GITHUB_TOKEN}}
+        branch: __${{github.event.repository.name}}_${{github.run_number}}
