@@ -10,8 +10,6 @@ env:
   BUILD_TYPE: Release
   GENERATOR: 'Visual Studio 16 2019'
   SGEN: vs2019-x64
-  HDF5_VER: 1.8.21      # @todo load from versions.cmd
-  POCO_VER: 1.9.4       # @todo load from versions.cmd
   IFORT_COMPILER21: C:\Program Files (x86)\Intel\oneAPI\compiler\2021.2.0\windows\
 
 
@@ -30,7 +28,7 @@ jobs:
         repository: i-RIC/iricdev-2019
         persist-credentials: false               # required to commit with a Personal access token
         ref: 2019                                # @todo change to master_v4 or develop_v4
-                
+
     - name: Checkout iriclib
       uses: actions/checkout@v2
       with:
@@ -52,7 +50,7 @@ jobs:
         # update CMakeLists.txt version number for iriclib
         Set-Location .\lib\src\iriclib-git
         (Get-Content .\CMakeLists.txt) | Foreach-Object {
-          if ($_ -match '  VERSION (?<major>0|[1-9]\d*)\.(?<minor>0|[1-9]\d*)(?:\.(?<patch>0|[1-9]\d*))?$') {
+          if ($_ -match '^  VERSION (?<major>0|[1-9]\d*)\.(?<minor>0|[1-9]\d*)(?:\.(?<patch>0|[1-9]\d*))?$') {
             if ($Matches.ContainsKey('patch')) {
               $patch = 1 + $Matches['patch']
             }
@@ -64,10 +62,19 @@ jobs:
           }
           return $_
         } | Set-Content .\CMakeLists.txt
-        echo "IRICLIB_VER=$env:IRICLIB_VER" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        Write-Output "IRICLIB_VER=$env:IRICLIB_VER" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
     - name: Setup programs
       run: Copy-Item .\programs_std.prop .\programs.prop
+
+    - name: Export POCO version
+      run: |
+        (Get-Content .\versions.cmd) | Foreach-Object {
+          if ($_ -imatch '^set POCO_VER=(?<version>.*)$') {
+            $env:POCO_VER = $Matches['version']
+          }
+        }
+        Write-Output "POCO_VER=$env:POCO_VER" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
     - name: Cache poco
       id: cache-poco
@@ -79,6 +86,15 @@ jobs:
     - name: Build poco
       if: steps.cache-poco.outputs.cache-hit != 'true'
       run: msbuild /noLogo /maxCpuCount /target:poco-build iricdev.proj
+
+    - name: Export HDF5 version
+      run: |
+        (Get-Content .\versions.cmd) | Foreach-Object {
+          if ($_ -imatch '^set HDF5_VER=(?<version>.*)$') {
+            $env:HDF5_VER = $Matches['version']
+          }
+        }
+        Write-Output "HDF5_VER=$env:HDF5_VER" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
     - name: Cache hdf5
       id: cache-hdf5
@@ -201,20 +217,6 @@ jobs:
           }
           return $_
         } | Set-Content .\versions.cmd
-        # versions.ps1
-        (Get-Content .\versions.ps1) | Foreach-Object {
-          if ($_ -match '^\$env:IRICLIB_VER=.*$') {
-            return '$env:IRICLIB_VER="' + $env:IRICLIB_VER + '"'
-          }
-          return $_
-        } | Set-Content .\versions.ps1
-        # VERSIONS
-        (Get-Content .\VERSIONS) | Foreach-Object {
-          if ($_ -match '^IRICLIB_VER=.*$') {
-            return 'IRICLIB_VER=' + $env:IRICLIB_VER
-          }
-          return $_
-        } | Set-Content .\VERSIONS
         # versions.sh
         (Get-Content .\versions.sh) | Foreach-Object {
           if ($_ -match '^IRICLIB_VER=.*$') {
