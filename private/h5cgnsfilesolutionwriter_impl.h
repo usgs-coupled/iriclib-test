@@ -11,6 +11,7 @@ public:
 	Impl(H5CgnsFileSolutionWriter* writer);
 	~Impl();
 
+	int writeSolStart();
 	int writeTime(double time);
 	int writeIteration(int iteration);
 
@@ -26,6 +27,9 @@ public:
 	int m_solutionId;
 
 private:
+	int writeSolStartStandard();
+	int writeSolStartSeparate();
+
 	int writeTimeStandard(double time);
 	int writeTimeSeparate(double time);
 

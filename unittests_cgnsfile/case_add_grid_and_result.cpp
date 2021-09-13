@@ -49,6 +49,9 @@ void case_addGridAndResult()
 	std::vector<int> ccactive;
 	ccactive.assign((isize - 1) * (jsize - 1), 1);
 
+	ier = cg_iRIC_Write_Sol_Start(fid);
+	VERIFY_LOG("cg_iRIC_Write_Sol_Start() ier == 0", ier == 0);
+
 	ier = cg_iRIC_Write_Sol_Time(fid, time);
 	VERIFY_LOG("cg_iRIC_Write_Sol_Time() ier == 0", ier == 0);
 
@@ -66,12 +69,19 @@ void case_addGridAndResult()
 
 	ier = cg_iRIC_Write_Sol_Cell_Integer(fid, "CCActive", ccactive.data());
 	VERIFY_LOG("cg_iRIC_Write_Sol_Cell_Integer() ier == 0", ier == 0);
+
+	ier = cg_iRIC_Write_Sol_End(fid);
+	VERIFY_LOG("cg_iRIC_Write_Sol_End() ier == 0", ier == 0);
 
 	time = 2.0;
 	depth.assign(isize * jsize, 8);
 	ccdepth.assign((isize - 1) * (jsize - 1), 8.1);
 	active.assign(isize * jsize, 0);
 	ccactive.assign((isize - 1) * (jsize - 1), 0);
+
+	ier = cg_iRIC_Write_Sol_Start(fid);
+	VERIFY_LOG("cg_iRIC_Write_Sol_Start() ier == 0", ier == 0);
+
 	ier = cg_iRIC_Write_Sol_Time(fid, time);
 	VERIFY_LOG("cg_iRIC_Write_Sol_Time() ier == 0", ier == 0);
 
@@ -89,6 +99,9 @@ void case_addGridAndResult()
 
 	ier = cg_iRIC_Write_Sol_Cell_Integer(fid, "CCActive", ccactive.data());
 	VERIFY_LOG("cg_iRIC_Write_Sol_Cell_Integer() ier == 0", ier == 0);
+
+	ier = cg_iRIC_Write_Sol_End(fid);
+	VERIFY_LOG("cg_iRIC_Write_Sol_End() ier == 0", ier == 0);
 
 	ier = cg_iRIC_Close(fid);
 	VERIFY_LOG("cg_iRIC_Close() ier == 0", ier == 0);

@@ -21,6 +21,11 @@ H5CgnsFileSolutionWriter::~H5CgnsFileSolutionWriter()
 	delete impl;
 }
 
+int H5CgnsFileSolutionWriter::writeSolStart()
+{
+	return impl->writeSolStart();
+}
+
 int H5CgnsFileSolutionWriter::writeTime(double time)
 {
 	return impl->writeTime(time);

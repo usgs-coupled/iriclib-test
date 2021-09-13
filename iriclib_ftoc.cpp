@@ -1171,10 +1171,6 @@ void IRICLIBDLL FMNAME(iric_initoption_f2c, IRIC_INITOPTION_F2C) (int* option, i
 	*ier = iRIC_InitOption(*option);
 }
 
-void IRICLIBDLL FMNAME(cg_iric_flush_f2c, CG_IRIC_FLUSH_F2C) (int* fid, int *ier) {
-	*ier = cg_iRIC_Flush(*fid);
-}
-
 
 // from iriclib_not_withbaseid.h
 void IRICLIBDLL FMNAME(cg_iric_read_complex_count_f2c, CG_IRIC_READ_COMPLEX_COUNT_F2C) (int* fid, STR_PSTR(groupname), int* num, int *ier STR_PLEN(groupname)) {
@@ -2386,6 +2382,14 @@ void IRICLIBDLL FMNAME(cg_iric_read_sol_baseiterative_string_f2c, CG_IRIC_READ_S
 
 	if (*ier != 0) return;
 	string_2_F_string(c_strvalue, STR_PTR(strvalue), STR_LEN(strvalue), ier);
+}
+
+void IRICLIBDLL FMNAME(cg_iric_write_sol_start_f2c, CG_IRIC_WRITE_SOL_START_F2C) (int* fid, int *ier) {
+	*ier = cg_iRIC_Write_Sol_Start(*fid);
+}
+
+void IRICLIBDLL FMNAME(cg_iric_write_sol_end_f2c, CG_IRIC_WRITE_SOL_END_F2C) (int* fid, int *ier) {
+	*ier = cg_iRIC_Write_Sol_End(*fid);
 }
 
 void IRICLIBDLL FMNAME(cg_iric_write_sol_time_f2c, CG_IRIC_WRITE_SOL_TIME_F2C) (int* fid, double* time, int *ier) {

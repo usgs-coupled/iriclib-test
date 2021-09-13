@@ -9,6 +9,8 @@
 #include "internal/iric_logger.h"
 #include "internal/iric_outputerror.h"
 
+#include <Poco/File.h>
+
 #include <algorithm>
 #include <sstream>
 
@@ -32,7 +34,10 @@ int cg_iRIC_Read_Sol_Count(int fid, int* count)
 	ier = file->ccBase()->biterData()->readIteration(&iterations);
 	RETURN_IF_ERR;
 
-	*count = static_cast<int> (std::max(times.size(), iterations.size()));
+	auto tmpCount = times.size();
+	if (tmpCount < iterations.size()) {tmpCount = iterations.size();}
+
+	*count = static_cast<int> (tmpCount);
 
 	_IRIC_LOGGER_TRACE_LEAVE();
 	return IRIC_NO_ERROR;
@@ -120,6 +125,43 @@ int cg_iRIC_Read_Sol_BaseIterative_String(int fid, int step, const char* name, c
 		*(strvalue + i) = *(value.data() + i);
 	}
 	*(strvalue + value.length()) = '\0';
+
+	_IRIC_LOGGER_TRACE_LEAVE();
+	return IRIC_NO_ERROR;
+}
+
+int cg_iRIC_Write_Sol_Start(int fid)
+{
+	_IRIC_LOGGER_TRACE_ENTER();
+
+	H5CgnsFile* file;
+	int ier = _iric_h5cgnsfiles_get(fid, &file);
+	RETURN_IF_ERR;
+
+	ier = file->solutionWriter()->writeSolStart();
+	RETURN_IF_ERR;
+
+	_IRIC_LOGGER_TRACE_LEAVE();
+	return IRIC_NO_ERROR;
+}
+
+int cg_iRIC_Write_Sol_End(int fid)
+{
+	_IRIC_LOGGER_TRACE_ENTER();
+
+	Poco::File f(".flush");
+	if (! f.exists()) {
+		return IRIC_NO_ERROR;
+	}
+
+	H5CgnsFile* file;
+	int ier = _iric_h5cgnsfiles_get(fid, &file);
+	RETURN_IF_ERR;
+
+	ier = file->solutionWriter()->flush();
+	RETURN_IF_ERR;
+
+	f.remove();
 
 	_IRIC_LOGGER_TRACE_LEAVE();
 	return IRIC_NO_ERROR;

@@ -24,6 +24,15 @@ H5CgnsFileSolutionWriter::Impl::~Impl()
 	delete m_targetFile;
 }
 
+int H5CgnsFileSolutionWriter::Impl::writeSolStart()
+{
+	if (m_mode == Mode::Standard) {
+		return writeSolStartStandard();
+	} else if (m_mode == Mode::Separate) {
+		return writeSolStartSeparate();
+	}
+}
+
 int H5CgnsFileSolutionWriter::Impl::writeTime(double time)
 {
 	if (m_mode == Mode::Standard) {
@@ -82,12 +91,13 @@ int H5CgnsFileSolutionWriter::Impl::writeBaseIterativeData(const std::string& na
 	return IRIC_NO_ERROR;
 }
 
-int H5CgnsFileSolutionWriter::Impl::writeTimeStandard(double time)
+
+int H5CgnsFileSolutionWriter::Impl::writeSolStartStandard()
 {
-	return m_file->writeTime(time);
+	return IRIC_NO_ERROR;
 }
 
-int H5CgnsFileSolutionWriter::Impl::writeTimeSeparate(double time)
+int H5CgnsFileSolutionWriter::Impl::writeSolStartSeparate()
 {
 	delete m_targetFile;
 
@@ -109,6 +119,18 @@ int H5CgnsFileSolutionWriter::Impl::writeTimeSeparate(double time)
 	ier = m_file->copyGridsTo(m_targetFile);
 	_IRIC_LOGGER_TRACE_CALL_END_WITHVAL("H5CgnsFile::copyGrids", ier);
 	RETURN_IF_ERR;
+
+	return IRIC_NO_ERROR;
+}
+
+int H5CgnsFileSolutionWriter::Impl::writeTimeStandard(double time)
+{
+	return m_file->writeTime(time);
+}
+
+int H5CgnsFileSolutionWriter::Impl::writeTimeSeparate(double time)
+{
+	int ier;
 
 	_IRIC_LOGGER_TRACE_CALL_START("H5CgnsFile::writeTime");
 	ier = m_file->writeTime(time);
@@ -135,27 +157,7 @@ int H5CgnsFileSolutionWriter::Impl::writeIterationStandard(int iteration)
 
 int H5CgnsFileSolutionWriter::Impl::writeIterationSeparate(int iteration)
 {
-	delete m_targetFile;
-	m_targetFile = nullptr;
-
-	++ m_solutionId;
-	int ier = H5CgnsFileSeparateSolutionUtil::createResultFolderIfNotExists(m_file->fileName());
-	RETURN_IF_ERR;
-
-	auto fName = H5CgnsFileSeparateSolutionUtil::fileNameForSolution(m_file->resultFolder(), m_solutionId);
-	try {
-		m_targetFile = new H5CgnsFile(fName, H5CgnsFile::Mode::Create);
-	} catch (...) {
-		std::ostringstream ss;
-		ss << "In H5CgnsFileSolutionWriter::Impl::writeIterationSeparate(), creating " << fName << " failed";
-		_iric_logger_error(ss.str());
-		return IRIC_H5_CREATE_FAIL;
-	}
-
-	_IRIC_LOGGER_TRACE_CALL_START("H5CgnsFile::copyGrids");
-	ier = m_file->copyGridsTo(m_targetFile);
-	_IRIC_LOGGER_TRACE_CALL_END_WITHVAL("H5CgnsFile::copyGrids", ier);
-	RETURN_IF_ERR;
+	int ier;
 
 	_IRIC_LOGGER_TRACE_CALL_START("H5CgnsFile::writeIteration");
 	ier = m_file->writeIteration(iteration);
