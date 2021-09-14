@@ -119,11 +119,11 @@ jobs:
     # - name: Test iriclib release
     #   run: cd lib/build/iriclib-${{env.IRICLIB_VER}} && ctest -C release
 
-    # - name: 7z sdk
-    #   run: |
-    #     Rename-Item .\lib\install iricsdk
-    #     7z a iricsdk.7z .\lib\iricsdk
-    #     Rename-Item .\lib\iricsdk install
+    - name: 7z sdk
+      run: |
+        # Rename-Item .\lib\install iricsdk
+        7z a iricsdk.7z .\lib\src\iriclib-git\unittests_cgnsfile
+        # Rename-Item .\lib\iricsdk install
 
     - name: Commit and push
       if: ${{ github.repository == 'usgs-coupled/iriclib-test' }}
