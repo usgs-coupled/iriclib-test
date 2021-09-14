@@ -130,25 +130,3 @@ int iRIC_InitOption(int option)
 	_IRIC_LOGGER_TRACE_LEAVE();
 	return IRIC_NO_ERROR;
 }
-
-int cg_iRIC_Flush(int fid)
-{
-	_IRIC_LOGGER_TRACE_ENTER();
-
-	Poco::File f(".flush");
-	if (! f.exists()) {
-		return IRIC_NO_ERROR;
-	}
-
-	H5CgnsFile* file;
-	int ier = _iric_h5cgnsfiles_get(fid, &file);
-	RETURN_IF_ERR;
-
-	ier = file->solutionWriter()->flush();
-	RETURN_IF_ERR;
-
-	f.remove();
-
-	_IRIC_LOGGER_TRACE_LEAVE();
-	return IRIC_NO_ERROR;
-}

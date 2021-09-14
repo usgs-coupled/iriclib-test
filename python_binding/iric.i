@@ -132,7 +132,6 @@ int iRIC_Check_Cancel();
 int cg_iRIC_Open(const char* filename, int mode, int* OUTPUT);
 int cg_iRIC_Close(int fid);
 int iRIC_InitOption(int option);
-int cg_iRIC_Flush(int fid);
 
 // from iriclib_not_withbaseid.h
 int cg_iRIC_Read_Complex_Count(int fid, const char* groupname, int* OUTPUT);
@@ -216,6 +215,8 @@ int cg_iRIC_Read_Sol_Iteration(int fid, int step, int* OUTPUT);
 int cg_iRIC_Read_Sol_BaseIterative_Integer(int fid, int step, const char* name, int* OUTPUT);
 int cg_iRIC_Read_Sol_BaseIterative_Real(int fid, int step, const char* name, double* OUTPUT);
 int cg_iRIC_Read_Sol_BaseIterative_String(int fid, int step, const char* name, char* strvalue);
+int cg_iRIC_Write_Sol_Start(int fid);
+int cg_iRIC_Write_Sol_End(int fid);
 int cg_iRIC_Write_Sol_Time(int fid, double time);
 int cg_iRIC_Write_Sol_Iteration(int fid, int index);
 int cg_iRIC_Write_Sol_BaseIterative_Integer(int fid, const char* name, int value);

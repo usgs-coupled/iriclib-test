@@ -46,6 +46,8 @@ def writeSolution(filename, fid, iterMode):
         particle_x[i] = i
 
     for i in range(5):
+        iric.cg_iRIC_Write_Sol_Start(fid)
+
         if iterMode:
             IterVal = i
             iric.cg_iRIC_Write_Sol_Iteration(fid, IterVal)
@@ -120,7 +122,7 @@ def writeSolution(filename, fid, iterMode):
 
         iric.cg_iRIC_Write_Sol_ParticleGroup_GroupEnd(fid)
 
-        iric.cg_iRIC_Flush(fid)
+        iric.cg_iRIC_Write_Sol_End(fid)
 
     return fid
 
@@ -150,6 +152,8 @@ def writeSolution3d(filename, fid):
         particle_x[i] = i
 
     for i in range(5):
+        iric.cg_iRIC_Write_Sol_Start(fid)
+
         TimeVal = i * 2.13
         iric.cg_iRIC_Write_Sol_Time(fid, TimeVal)
 
@@ -188,7 +192,7 @@ def writeSolution3d(filename, fid):
 
         iric.cg_iRIC_Write_Sol_ParticleGroup_GroupEnd(fid)
 
-        iric.cg_iRIC_Flush(fid)
+        iric.cg_iRIC_Write_Sol_End(fid)
 
     return fid
 

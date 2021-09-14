@@ -20,6 +20,7 @@ public:
 	H5CgnsFileSolutionWriter(Mode mode, H5CgnsFile* file);
 	~H5CgnsFileSolutionWriter();
 
+	int writeSolStart();
 	int writeTime(double time);
 	int writeIteration(int iteration);
 
